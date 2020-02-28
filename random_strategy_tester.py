@@ -12,7 +12,7 @@ data = pd.read_csv("historical_price_data/bistamp_hourly_since_beginning.csv",
 #'BB_strat_breakout','BB_strat','RSI_strat'
 all_strats = ['MA_strat','BB_strat','RSI_strat','OBV_strat']
 
-iterations = 1000
+iterations = 100000
 max_data_points = len(data)-35000
 
 return_list = pd.DataFrame(columns=['first_sharpe','multi_sharpe',
@@ -46,7 +46,7 @@ for i in range(iterations):
  
         if 'RSI_strat' in strats:
                 RSI_time_frame = random.randint(10, max_data_points)
-                buy_level = random.randint(1,80)
+                buy_level = random.randint(1,60)
                 sell_level = random.randint(buy_level,100)
                 combined_strats['RSI_strat'] = RSI_indicator(data, RSI_time_frame, buy_level, sell_level)
         
