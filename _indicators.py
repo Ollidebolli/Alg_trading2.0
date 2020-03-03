@@ -2,8 +2,7 @@ import pandas as pd
 import numpy as np
 from _functions import moving_average
 
-def BB_indicator(data,time_frame, std_multiple, breakout=False, return_full=False):
-    close = data['close'].to_numpy()
+def BB_indicator(close,time_frame, std_multiple, breakout=False, return_full=False):
     ma = moving_average(close,n=time_frame)
     std = pd.Series(close).rolling(window=time_frame).std().to_numpy()
     upper_band = ma + (std * std_multiple)
@@ -19,11 +18,9 @@ def BB_indicator(data,time_frame, std_multiple, breakout=False, return_full=Fals
     if return_full: return pd.DataFrame({'lower_band':lower_band,'upper_band':upper_band,'signals':signals})
     else: return signals
 
-def MA_indicator(data, short_time_frame, long_time_frame, extender=0, return_full=False):
-    nrs = data['close'].to_numpy()
-
-    ma_short = moving_average(nrs, n=short_time_frame)
-    ma_long = moving_average(nrs, n=long_time_frame)
+def MA_indicator(close, short_time_frame, long_time_frame, extender=0, return_full=False):
+    ma_short = moving_average(close, n=short_time_frame)
+    ma_long = moving_average(close, n=long_time_frame)
     signals = np.where(ma_short[long_time_frame:] > ma_long[long_time_frame:], 1.0,0)
     signals = np.pad(signals,(long_time_frame,0),'constant',constant_values=(0,0))
     signals = np.ediff1d(signals, to_begin=signals[0])
@@ -33,8 +30,7 @@ def MA_indicator(data, short_time_frame, long_time_frame, extender=0, return_ful
     if return_full: return pd.DataFrame({'short':ma_short,'long':ma_long,'signals':signals})
     else: return signals
     
-def RSI_indicator(data, timeframe, buy_level, sell_level, return_full=False):
-    close = data['close'].to_numpy()
+def RSI_indicator(close, timeframe, buy_level, sell_level, return_full=False):
     delta = np.ediff1d(close, to_begin=close[0])
     dUp, dDown = delta.copy(), delta.copy()
     dUp[dUp < 0] = 0
