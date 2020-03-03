@@ -15,6 +15,8 @@ all_strats = ['MA_strat','BB_strat','RSI_strat','OBV_strat']
 iterations = 100000
 max_data_points = len(data)-35000
 
+close = data['close'].to_numpy()
+
 return_list = pd.DataFrame(columns=['first_sharpe','multi_sharpe',
                                     'norm_return_first','cum_return_first',
                                     'norm_return_multi','cum_return_multi',
@@ -59,17 +61,14 @@ for i in range(iterations):
         combined_strats['strenght'] = combined_strats.sum(axis=1)
         strength_level = len(strats)
 
-        combined_strats['all_yes'] = np.where(combined_strats['strenght'] >= strength_level, 1.0, 
-                                     np.where(combined_strats['strenght'] <= -strength_level, -1, 0))
-
+        all_yes = np.where(combined_strats['strenght'] >= strength_level, 1.0, 
+                  np.where(combined_strats['strenght'] <= -strength_level, -1, 0))
+   
+        all_yes = create_single_signal(all_yes)
         
-        combined_strats['all_yes'] = create_single_signal(np.array(combined_strats['all_yes']))
-
-        combined_strats['close'] = data['close']
-        
-        if combined_strats['all_yes'].any() != 0:
-                sharpe_first, cum_first, norm_first = first_signal_long_short(combined_strats, 100000, normalized=True)
-                sharpe_multi, cum_multi, norm_multi = multi_signal_long_short(combined_strats, 100000, normalized=True)
+        if all_yes.any() != 0:
+                sharpe_first, cum_first, norm_first = first_signal_long_short(close, all_yes, 100000, normalized=True)
+                sharpe_multi, cum_multi, norm_multi = multi_signal_long_short(close, all_yes, 100000, normalized=True)
 
                 return_list['first_sharpe'][i] = sharpe_first
                 return_list['multi_sharpe'][i] = sharpe_multi
@@ -77,7 +76,7 @@ for i in range(iterations):
                 return_list['cum_return_first'][i] = cum_first
                 return_list['norm_return_multi'][i] = norm_multi
                 return_list['cum_return_multi'][i] = cum_multi
-                return_list['nr of trades'][i] = combined_strats['all_yes'].astype(bool).sum(axis=0)
+                return_list['nr of trades'][i] = all_yes.astype(bool).sum(axis=0)
                 return_list['nr of indicators'][i] = len(strats)
 
                 if 'BB_strat_breakout' in strats: return_list['BA_BB_strat'][i] = {'BA_BB_range':BA_BB_range, 'BA_std_multiple':BA_std_multiple}
