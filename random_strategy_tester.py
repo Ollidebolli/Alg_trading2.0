@@ -13,7 +13,7 @@ data = pd.read_csv("historical_price_data/bistamp_hourly_since_beginning.csv",
 #'BB_strat_breakout','BB_strat','RSI_strat'
 all_strats = ['MA_strat','BB_strat','RSI_strat','OBV_strat']
 
-iterations = 100000
+iterations = 10000
 max_data_points = int(len(data) / 2)
 
 close = data['close'].to_numpy()
@@ -64,7 +64,7 @@ for i in range(iterations):
         all_yes = np.where(strength >= strength_level, 1.0, 
                   np.where(strength <= -strength_level, -1, 0))
         
-        if all_yes.any() != 0:
+        if any(all_yes):
 
                 all_yes = create_single_signal(all_yes)
 
@@ -93,3 +93,4 @@ for i in range(iterations):
 return_list.sort_values(by=['norm_return_first'], ascending=False, inplace=True)
 
 return_list.to_excel('RETRUNS_TST.xlsx')
+return_list.to_csv('returns.csv')

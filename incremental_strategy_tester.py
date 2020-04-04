@@ -27,10 +27,10 @@ for length in range(336,1200)[1::5]:
         for second in range(65,95)[::2]:
             
             combined_strats = pd.DataFrame(index=data.index)
-            combined_strats['OBV'] = OBV_strat(data,18,21,1)
+            combined_strats['OBV'] = OBV_indicator(data,18,21,1)
             return_list['OBV_strat'][count] = {'Short_ma':18, 'Long_ma':21}
 
-            combined_strats['RSI_strat'] = RSI_strategy(data, length, first, second)
+            combined_strats['RSI_strat'] = RSI_indicator(data, length, first, second)
             return_list['RSI_strat'][count] = {'time_frame':length, 'buy_level':first, 'sell_level':second}
 
 
@@ -43,7 +43,8 @@ for length in range(336,1200)[1::5]:
 
             combined_strats['close'] = data['close']
 
-            if combined_strats['all_yes'].any() != 0:
+            if any(combined_strats['all_yes']):
+
                 sharpe_first, cum_first, norm_first = first_signal_long_short(combined_strats, 100000, normalized=True)
                 sharpe_multi, cum_multi, norm_multi = multi_signal_long_short(combined_strats, 100000, normalized=True)
 
