@@ -28,7 +28,7 @@ def MA_indicator(close, short_time_frame, long_time_frame, extender=0, return_fu
     signals = pd.Series(signals).replace({0:np.nan}).ffill(limit=extender).fillna(0)
     
     if return_full: return pd.DataFrame({'short':ma_short,'long':ma_long,'signals':signals})
-    else: return signals
+    else: return signals.to_numpy()
     
 def RSI_indicator(close, timeframe, buy_level, sell_level, return_full=False):
     delta = np.ediff1d(close, to_begin=close[0])

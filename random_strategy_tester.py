@@ -9,50 +9,50 @@ from _performance_measurements import multi_signal_long_short, first_signal_long
 
 data = pd.read_csv("historical_price_data/bistamp_hourly_since_beginning.csv",
                   usecols=['date','close','volume'])
-                  
-#'BB_strat_breakout','BB_strat','RSI_strat'
-all_strats = ['MA_strat','BB_strat','RSI_strat','OBV_strat']
+close = data['close'].to_numpy()
 
-iterations = 10000
+iterations = 2500
 max_data_points = int(len(data) / 2)
 
-close = data['close'].to_numpy()
+
+indicators = ['MA_indicator','BB_indicator','RSI_indicator','OBV_indicator']
+
 
 return_list = pd.DataFrame(columns=['first_sharpe','multi_sharpe',
                                     'norm_return_first','cum_return_first',
                                     'norm_return_multi','cum_return_multi',
-                                    'MA_strat','BB_strat','BB_strat_breakout','RSI_strat','OBV_strat',
+                                    'MA_indicator','BB_indicator','BB_indicator_breakout','RSI_indicator','OBV_indicator',
                                     'nr of trades', 'nr of indicators'
                                     ],index=np.arange(iterations))
 
 for i in range(iterations):
 
-        strats = combination_maker(all_strats, min=1)
+        included_indicators = combination_maker(indicators, min=1)
         signals = []
 
-        if 'BB_strat_breakout' in strats:
-                BA_BB_range = random.randint(1, max_data_points)
-                BA_std_multiple = random.uniform(0.3, 10)
-                signals.append(BB_indicator(close, BA_BB_range, BA_std_multiple, breakout=True))
+        if 'BB_indicator_breakout' in included_indicators:
+                BB_BO_range = random.randint(1, max_data_points)
+                BB_BO_std_multiple = random.uniform(0.3, 10)
+                signals.append(BB_indicator(close, BB_BO_range, BB_BO_std_multiple, breakout=True))
 
-        if 'BB_strat' in strats:
+        if 'BB_indicator' in included_indicators:
                 BB_range = random.randint(1, max_data_points)
                 std_multiple = random.uniform(0.3, 10)
                 signals.append(BB_indicator(close, BB_range, std_multiple))   
 
-        if 'MA_strat' in strats:
+        if 'MA_indicator' in included_indicators:
                 MA_short = random.randint(1, max_data_points-10)
                 MA_long = random.randint(MA_short, max_data_points)
                 MA_signal_extender = random.randint(2, 15)
                 signals.append(MA_indicator(close, MA_short, MA_long, MA_signal_extender))
  
-        if 'RSI_strat' in strats:
+        if 'RSI_indicator' in included_indicators:
                 RSI_time_frame = random.randint(10, max_data_points)
                 buy_level = random.randint(1,60)
                 sell_level = random.randint(buy_level,100)
                 signals.append(RSI_indicator(close, RSI_time_frame, buy_level, sell_level))
         
-        if 'OBV_strat' in strats:
+        if 'OBV_indicator' in included_indicators:
                 OBV_MA_short = random.randint(1, max_data_points-10)
                 OBV_MA_long = random.randint(OBV_MA_short, max_data_points)
                 OBV_signal_extender = random.randint(2, 15)
@@ -78,19 +78,18 @@ for i in range(iterations):
                 return_list['norm_return_multi'][i] = norm_multi
                 return_list['cum_return_multi'][i] = cum_multi
                 return_list['nr of trades'][i] = all_yes.astype(bool).sum(axis=0)
-                return_list['nr of indicators'][i] = len(strats)
+                return_list['nr of indicators'][i] = len(included_indicators)
 
-                if 'BB_strat_breakout' in strats: return_list['BA_BB_strat'][i] = {'BA_BB_range':BA_BB_range, 'BA_std_multiple':BA_std_multiple}
-                if 'BB_strat' in strats: return_list['BB_strat'][i] = {'BB_range':BB_range, 'std_multiple':std_multiple}
-                if 'MA_strat' in strats: return_list['MA_strat'][i] = {'MA_short':MA_short, 'MA_long':MA_long, 'extender':MA_signal_extender}
-                if 'RSI_strat' in strats: return_list['RSI_strat'][i] = {'time_frame':RSI_time_frame, 'buy_level':buy_level, 'sell_level':sell_level}
-                if 'OBV_strat' in strats: return_list['OBV_strat'][i] = {'OBV_short_MA':OBV_MA_short,'OBV_long_MA':OBV_MA_long,'Extender':OBV_signal_extender}
+                if 'BB_indicator_breakout' in included_indicators: return_list['BB_indicator_breakout'][i] = {'BB_BO_range':BB_BO_range, 'BB_BO_std_multiple':BB_BO_std_multiple}
+                if 'BB_indicator' in included_indicators: return_list['BB_indicator'][i] = {'BB_range':BB_range, 'std_multiple':std_multiple}
+                if 'MA_indicator' in included_indicators: return_list['MA_indicator'][i] = {'MA_short':MA_short, 'MA_long':MA_long, 'MA_extender':MA_signal_extender}
+                if 'RSI_indicator' in included_indicators: return_list['RSI_indicator'][i] = {'RSI_time_frame':RSI_time_frame, 'RSI_buy_level':buy_level, 'RSI_sell_level':sell_level}
+                if 'OBV_indicator' in included_indicators: return_list['OBV_indicator'][i] = {'OBV_MA_short':OBV_MA_short,'OBV_MA_long':OBV_MA_long,'OBV_extender':OBV_signal_extender}
                 
 
         
         print(i)
 
-return_list.sort_values(by=['norm_return_first'], ascending=False, inplace=True)
 
-return_list.to_excel('RETRUNS_TST.xlsx')
+return_list.sort_values(by=['norm_return_first'], ascending=False, inplace=True)
 return_list.to_csv('returns.csv')

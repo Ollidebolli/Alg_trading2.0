@@ -5,9 +5,9 @@ from _functions import repeat_last, multi_long_short
 
 def first_signal_long_short(close, all_yes, initial_capital, return_full=False, normalized=False):
     
-    signals = repeat_last(all_yes)
-    pos_diff = np.ediff1d(signals, to_begin=signals[0])
-    holdings = signals * close
+    position = repeat_last(all_yes)
+    pos_diff = np.ediff1d(position, to_begin=position[0])
+    holdings = position * close
     cash = initial_capital - (pos_diff * close).cumsum()
     total = cash + holdings
     returns = np.diff(total) / total[:-1:]
@@ -22,9 +22,9 @@ def first_signal_long_short(close, all_yes, initial_capital, return_full=False, 
 
 def multi_signal_long_short(close, all_yes, initial_capital, return_full=False, normalized=False):
 
-    signals = multi_long_short(all_yes)
-    pos_diff = np.ediff1d(signals, to_begin=signals[0])
-    holdings = signals * close
+    position = multi_long_short(all_yes)
+    pos_diff = np.ediff1d(position, to_begin=position[0])
+    holdings = position * close
     cash = initial_capital - (pos_diff * close).cumsum()
     total = cash + holdings
     returns = np.diff(total) / total[:-1:]
