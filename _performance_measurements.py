@@ -12,6 +12,7 @@ def first_signal_long_short(close, all_yes, initial_capital, return_full=False, 
     total = cash + holdings
     returns = np.diff(total) / total[:-1:]
     cum_returns = returns.cumsum()
+    cum_returns = np.pad(cum_returns,(1,0))
     norm_returns = total / total[0]-1
     sharpe = returns.mean() / returns.std()
     
@@ -29,6 +30,7 @@ def multi_signal_long_short(close, all_yes, initial_capital, return_full=False, 
     total = cash + holdings
     returns = np.diff(total) / total[:-1:]
     cum_returns = returns.cumsum()
+    cum_returns = np.pad(cum_returns,(1,0))
     norm_returns = total / total[0]-1
     sharpe = returns.mean() / returns.std()
     

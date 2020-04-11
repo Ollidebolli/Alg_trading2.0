@@ -7,11 +7,11 @@ from _functions import create_single_signal, combination_maker, moving_average
 from _performance_measurements import multi_signal_long_short, first_signal_long_short
 
 
-data = pd.read_csv("historical_price_data/bistamp_hourly_since_beginning.csv",
+data = pd.read_csv("historical_price_data/lol.csv",
                   usecols=['date','close','volume'])
 close = data['close'].to_numpy()
 
-iterations = 2500
+iterations = 50000
 max_data_points = int(len(data) / 2)
 
 

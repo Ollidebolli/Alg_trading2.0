@@ -9,36 +9,38 @@ from _performance_measurements import multi_signal_long_short, first_signal_long
 data = pd.read_csv("historical_price_data/bistamp_hourly_since_beginning.csv",
                   usecols=['close','volume'])
 
+close = data['close'].to_numpy()
+
 combined_indicators = pd.DataFrame(index=data.index)
 
-indicators = ['obv_signal']
+indicators = ['rsi_signal']
 
 if 'bb_signal_bo' in indicators:
         BB_range = random.randint(1, 300)
         std_multiple = random.uniform(0.3, 10)
-        combined_indicators[['bb_lower_bo','bb_upper_bo','bb_signal_bo']] = BB_indicator(data, BB_range, std_multiple, breakout=True, return_full=True)[['lower_band','upper_band','signals']]
+        combined_indicators[['bb_lower_bo','bb_upper_bo','bb_signal_bo']] = BB_indicator(close, BB_range, std_multiple, breakout=True, return_full=True)[['lower_band','upper_band','signals']]
 
 if 'bb_signal' in indicators:
         BB_range = 9099
         std_multiple = 0.4661689574
-        combined_indicators[['bb_lower','bb_upper','bb_signal']] = BB_indicator(data, BB_range, std_multiple, return_full=True)[['lower_band','upper_band','signals']]
+        combined_indicators[['bb_lower','bb_upper','bb_signal']] = BB_indicator(close, BB_range, std_multiple, return_full=True)[['lower_band','upper_band','signals']]
 
 if 'ma_signal' in indicators:
         MA_short = 237
         MA_long = 476
         signal_extender = 9
-        combined_indicators[['ma_short','ma_long','ma_signal']] = MA_indicator(data, MA_short, MA_long, extender=signal_extender, return_full=True)[['short','long','signals']]
+        combined_indicators[['ma_short','ma_long','ma_signal']] = MA_indicator(close, MA_short, MA_long, extender=signal_extender, return_full=True)[['short','long','signals']]
 
 if 'rsi_signal' in indicators:
-        time_frame = 1388
-        combined_indicators['rsi_buy'] = rsi_buy_level = 66
-        combined_indicators['rsi_sell']  = rsi_sell_level = 77
-        combined_indicators[['rsi_index','rsi_signal']] = RSI_indicator(data, time_frame, rsi_buy_level, rsi_sell_level, return_full=True)[['rsi_index','signal']]
+        time_frame = 256
+        combined_indicators['rsi_buy'] = rsi_buy_level = 54
+        combined_indicators['rsi_sell']  = rsi_sell_level = 78
+        combined_indicators[['rsi_index','rsi_signal']] = RSI_indicator(close, time_frame, rsi_buy_level, rsi_sell_level, return_full=True)[['rsi_index','signal']]
 
 if 'obv_signal' in indicators:
-        OBV_short = 36170
-        OBV_long = 38653
-        signal_extender = 7
+        OBV_short = 36331
+        OBV_long = 36843
+        signal_extender = 9
         combined_indicators[['obv_short','obv_long','obv','obv_signal']] = OBV_indicator(data, OBV_short, OBV_long, extender=signal_extender,return_full=True)[['short_ma','long_ma','OBV','signal']]
 
 
