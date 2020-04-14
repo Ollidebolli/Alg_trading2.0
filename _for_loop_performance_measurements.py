@@ -90,6 +90,9 @@ def multi_signal_for(input_close, signals, max_pos = 10, initial_capital = 100, 
             cash_balance = cash
             holdings = 0
             prev_pos_size = 0
+            ACT_short = 0
+            short_pos = 0
+            long_pos = 0
 
         if (pos_size == max_pos) | (pos_size == -max_pos): pos_size = prev_pos_size
         
@@ -122,7 +125,7 @@ def multi_signal_for(input_close, signals, max_pos = 10, initial_capital = 100, 
             cash = prev_cash
             cash_balance = prev_cash_balance
             short_pos = holdings * close
-            ACT_short = cash_balance - cash - short_pos
+            ACT_short = cash - cash_balance - short_pos
             
             long_pos = 0
         
@@ -207,7 +210,7 @@ def multi_signal_for(input_close, signals, max_pos = 10, initial_capital = 100, 
         elif (pos_size == 0) & (signal == -1):
             
             cashflow = -(cash / max_pos)
-            holdings_diff = cashflow * close
+            holdings_diff = cashflow / close
             holdings = prev_holdings + holdings_diff
             cash = cash + cashflow
             cash_balance = prev_cash_balance - (holdings_diff * close)

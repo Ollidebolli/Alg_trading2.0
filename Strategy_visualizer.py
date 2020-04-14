@@ -50,7 +50,7 @@ combined_indicators['all_yes'] = np.where(combined_indicators['strength'] >= str
                                  np.where(combined_indicators['strength'] <= -strength_level, -1, 0))
 combined_indicators['all_yes'] = create_single_signal(np.array(combined_indicators['all_yes']))
 
-fig = plt.figure(figsize=(10,10),dpi=80)
+fig = plt.figure(figsize=(10,10), dpi=80)
 ax1 = fig.add_subplot(2,1,1) 
 ax2 = fig.add_subplot(6,1,4)
 ax3 = fig.add_subplot(6,1,5)
